@@ -1,7 +1,9 @@
 # zrss
 Publishing Content from the SAP NetWeaver Application Server ABAP to ADT and other RSS Readers
 
-Installation of the DDIC objects
+If ypou want know, what this project is about, please go to http://scn.sap.com/community/abap/blog/2012/01/03/publishing-content-from-the-sap-netweaver-as-abap-to-igoogle-and-other-rss-readers
+
+# Installation of the DDIC objects
 
 To install the programs and DDIC object you have to use a tool named “SAP Link“. If you have not installed it yet, please go to the code exchange project SAP LINK, download the code and install it.
 
