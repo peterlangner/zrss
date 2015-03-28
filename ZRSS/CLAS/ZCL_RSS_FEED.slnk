@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_RSS_FEED" VERSION="1" LANGU="D" DESCRIPT="RSS feed" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSABSTRCT="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" RSTAT="K" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+ <implementing CLSNAME="ZCL_RSS_FEED" REFCLSNAME="IF_HTTP_EXTENSION" VERSION="1" EXPOSURE="2" STATE="1" RELTYPE="1"/>
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <attribute CLSNAME="ZCL_RSS_FEED" CMPNAME="RSSFEED" VERSION="1" LANGU="D" DESCRIPT="RSS-Feed" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZRSS_FEED" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <attribute CLSNAME="ZCL_RSS_FEED" CMPNAME="RSS_TYPE" VERSION="1" LANGU="D" DESCRIPT="Content Type of RSS" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="&apos;application/rss+xml&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+ <interfaceMethod CLSNAME="ZCL_RSS_FEED" CPDNAME="IF_HTTP_EXTENSION~HANDLE_REQUEST">
+  <source>METHOD if_http_extension~handle_request.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+  DATA:
+    l_xml      TYPE string,
+    l_rssparam TYPE string.
+
+  l_rssparam = server-&gt;request-&gt;get_header_field( if_http_header_fields_sap=&gt;query_string ).
+
+  CLEAR rssfeed.
+  REFRESH rssfeed-items.
+
+  CALL METHOD me-&gt;fill_rssfeed
+    EXPORTING
+      rssparam = l_rssparam
+    RECEIVING
+      rssfeed  = rssfeed.
+
+  CALL TRANSFORMATION zrss_to_xml
+    SOURCE rssfeed = rssfeed
+    RESULT XML l_xml.
+
+  server-&gt;response-&gt;set_header_field(
+      name  = if_http_header_fields=&gt;content_type
+      value = rss_type ).
+
+  server-&gt;response-&gt;set_cdata( data = l_xml ).
+
+ENDMETHOD.</source>
+ </interfaceMethod>
+ <method CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" VERSION="1" LANGU="D" DESCRIPT="Fill the feed table" EXPOSURE="1" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" SCONAME="RSSPARAM" VERSION="1" LANGU="D" DESCRIPT="Parameter des Feeds" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+  <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" SCONAME="RSSFEED" VERSION="1" LANGU="D" DESCRIPT="RSS-Feed" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRSS_FEED"/>
+ </method>
+ <method CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" VERSION="1" LANGU="D" DESCRIPT="Get publication date in RFC822 format" EXPOSURE="1" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="DATE" VERSION="1" LANGU="D" DESCRIPT="Aktuelles Datum des Applikationsservers" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+  <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="TIME" VERSION="1" LANGU="D" DESCRIPT="Aktuelle Uhrzeit   des Applikationsservers" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT" PARVALUE="SY-UZEIT"/>
+  <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="PUBDATE" VERSION="1" LANGU="D" DESCRIPT="Datum des Eintrags bzw des Feeds" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRSS_PUBDATE"/>
+  <source>METHOD get_pubdate.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+* Following specification of RFC822.
+
+  DATA:
+    l_year      TYPE char4,
+    l_month     TYPE char2,
+    l_day       TYPE char2,
+    l_monthname TYPE char3,
+    l_dayname   TYPE char3,
+    l_weekday   TYPE SCAL-INDICATOR.
+
+* Split date
+  l_year  = date(4).
+  l_month = date+4(2).
+  l_day   = date+6(2).
+
+* Build name of month
+  CASE l_month.
+    WHEN &apos;01&apos;.
+      l_monthname = &apos;Jan&apos;.
+    WHEN &apos;02&apos;.
+      l_monthname = &apos;Feb&apos;.
+    WHEN &apos;03&apos;.
+      l_monthname = &apos;Mar&apos;.
+    WHEN &apos;04&apos;.
+      l_monthname = &apos;Apr&apos;.
+    WHEN &apos;05&apos;.
+      l_monthname = &apos;May&apos;.
+    WHEN &apos;06&apos;.
+      l_monthname = &apos;Jun&apos;.
+    WHEN &apos;07&apos;.
+      l_monthname = &apos;Jul&apos;.
+    WHEN &apos;08&apos;.
+      l_monthname = &apos;Aug&apos;.
+    WHEN &apos;09&apos;.
+      l_monthname = &apos;Seg&apos;.
+    WHEN &apos;10&apos;.
+      l_monthname = &apos;Oct&apos;.
+    WHEN &apos;11&apos;.
+      l_monthname = &apos;Nov&apos;.
+    WHEN &apos;12&apos;.
+      l_monthname = &apos;Dec&apos;.
+  ENDCASE.
+
+* Build name of day
+  CALL FUNCTION &apos;DATE_COMPUTE_DAY&apos;
+    EXPORTING
+      date = date
+    IMPORTING
+      day  = l_weekday.
+
+  CASE l_weekday.
+    WHEN &apos;1&apos;.
+      l_dayname = &apos;Mon&apos;.
+    WHEN &apos;2&apos;.
+      l_dayname = &apos;Tue&apos;.
+    WHEN &apos;3&apos;.
+      l_dayname = &apos;Wed&apos;.
+    WHEN &apos;4&apos;.
+      l_dayname = &apos;Thu&apos;.
+    WHEN &apos;5&apos;.
+      l_dayname = &apos;Fri&apos;.
+    WHEN &apos;6&apos;.
+      l_dayname = &apos;Sat&apos;.
+    WHEN &apos;7&apos;.
+      l_dayname = &apos;Sun&apos;.
+  ENDCASE.
+
+* Build publish date
+  CONCATENATE l_dayname &apos;, &apos; l_day space l_monthname space l_year
+    space time(2) &apos;:&apos; time+2(2) &apos;:&apos; time+4(2) space sy-zonlo
+    INTO pubdate RESPECTING BLANKS.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

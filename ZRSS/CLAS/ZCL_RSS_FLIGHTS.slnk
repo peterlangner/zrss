@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZCL_RSS_FLIGHTS" VERSION="1" LANGU="E" DESCRIPT="Demo of RSS feed" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZCL_RSS_FEED">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZCL_RSS_FLIGHTS" REFCLSNAME="ZCL_RSS_FEED" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZCL_RSS_FLIGHTS" REFCLSNAME="ZCL_RSS_FEED" VERSION="1" MTDNAME="FILL_RSSFEED"/>
+ </inheritance>
+ <method CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD fill_rssfeed.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+
+* Run report BCALV_GENERATE_ALV_T_T2 to fill the table
+  DATA:
+    lt_flights   TYPE TABLE OF alv_t_t2,
+    ls_flights   TYPE alv_t_t2,
+    ls_rss_item  TYPE zrss_item,
+    l_date       TYPE char10,
+    l_fromdate   TYPE char10,
+    l_todate     TYPE char10,
+    l_distance   TYPE char15,
+    l_fltime     TYPE char15,
+    l_deptime    TYPE char8,
+    l_arrtime    TYPE char8.
+
+* Fill Header
+  rssfeed-title       = &apos;ADventas RSS Feed&apos;.
+  rssfeed-description = &apos;Let`s try to publish a RSS feed from SAP system.&apos;.
+  rssfeed-link        = &apos;http://www.adventas.de&apos;.
+  rssfeed-langu       = &apos;EN&apos;.
+  CALL METHOD me-&gt;get_pubdate
+    EXPORTING
+      date    = sy-datum
+      time    = sy-uzeit
+    RECEIVING
+      pubdate = rssfeed-pubdate.
+* Header image
+  rssfeed-url_i   = &apos;http://www.adventas.de/images/adventas.png&apos;.
+  rssfeed-title_i = &apos;ADventas Consulting&apos;.
+  rssfeed-link_i  = &apos;http://www.adventas.de&apos;.
+
+  CONCATENATE  rssparam &apos;01&apos; INTO l_fromdate.
+  CONCATENATE  rssparam &apos;31&apos; INTO l_todate.
+
+* Get flight data
+  SELECT * FROM  alv_t_t2 INTO TABLE lt_flights
+     WHERE fldate GE l_fromdate
+       AND fldate LE l_todate.
+
+* Fill RSS feed
+  LOOP AT lt_flights INTO ls_flights.
+
+    CLEAR ls_rss_item.
+
+    CONCATENATE ls_flights-fldate(4) &apos;/&apos; ls_flights-fldate+4(2) &apos;/&apos; ls_flights-fldate+6(2) INTO l_date.
+    CONCATENATE &apos;Flightnumber &apos; ls_flights-carrid  ls_flights-connid
+      &apos; departure date &apos; l_date INTO ls_rss_item-title RESPECTING BLANKS.
+
+    WRITE ls_flights-distance TO l_distance.
+    WRITE ls_flights-fltime TO l_fltime.
+    WRITE ls_flights-deptime TO l_deptime.
+    WRITE ls_flights-arrtime TO l_arrtime.
+
+    CONCATENATE &apos;This flight leaves from &apos; ls_flights-airpfrom
+    &apos; to &apos; ls_flights-airpto
+    &apos;. The departure time is &apos; l_deptime
+    &apos;h, the arrival time &apos; l_arrtime
+    &apos;h. The flight time is &apos; l_fltime
+    &apos;hours. The flight distance is  &apos; l_distance
+    &apos; Miles.&apos; INTO ls_rss_item-description RESPECTING BLANKS.
+
+    ls_rss_item-link = &apos;http://www.adventas.de&apos;.
+
+    ls_rss_item-author = &apos;Peter Langner&apos;.
+
+    CONCATENATE ls_flights-mandt ls_flights-carrid ls_flights-connid ls_flights-fldate
+       INTO ls_rss_item-guid SEPARATED BY space.
+
+    ls_rss_item-pubdate = rssfeed-pubdate.
+
+    APPEND ls_rss_item TO rssfeed-items.
+
+  ENDLOOP.
+
+ENDMETHOD.</source>
+ </method>
+</CLAS>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DTEL ROLLNAME="ZRSS_DESC_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="06" SCRLEN1="06" SCRLEN2="12" SCRLEN3="22" DDTEXT="Eine kurze Beschreibung des Feeds." REPTEXT="Inhalt" SCRTEXT_S="Inhalt" SCRTEXT_M="Beschreibung" SCRTEXT_L="Beschreibung des Feeds" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+ <tpara/>
+</DTEL>

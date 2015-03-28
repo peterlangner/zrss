@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nugget name="C:\Users\Peter\Documents\ADventas\Projekte\AVT015 - ABAP and RSS\130 Auslieferung\git\build\zrss.nugg">
+ <CLAS CLSNAME="ZCL_RSS_FEED" VERSION="1" LANGU="D" DESCRIPT="RSS feed" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSABSTRCT="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" RSTAT="K" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 ">
+  <implementing CLSNAME="ZCL_RSS_FEED" REFCLSNAME="IF_HTTP_EXTENSION" VERSION="1" EXPOSURE="2" STATE="1" RELTYPE="1"/>
+  <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+  <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+  <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+  <attribute CLSNAME="ZCL_RSS_FEED" CMPNAME="RSSFEED" VERSION="1" LANGU="D" DESCRIPT="RSS-Feed" EXPOSURE="0" STATE="1" EDITORDER="1 " ATTDECLTYP="0" ATTEXPVIRT="0" TYPTYPE="1" TYPE="ZRSS_FEED" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+  <attribute CLSNAME="ZCL_RSS_FEED" CMPNAME="RSS_TYPE" VERSION="1" LANGU="D" DESCRIPT="Content Type of RSS" EXPOSURE="2" STATE="1" EDITORDER="2 " ATTDECLTYP="2" ATTVALUE="&apos;application/rss+xml&apos;" ATTEXPVIRT="0" TYPTYPE="1" TYPE="STRING" SRCROW1="0 " SRCCOLUMN1="0 " SRCROW2="0 " SRCCOLUMN2="0 " TYPESRC_LENG="0 "/>
+  <interfaceMethod CLSNAME="ZCL_RSS_FEED" CPDNAME="IF_HTTP_EXTENSION~HANDLE_REQUEST">
+   <source>METHOD if_http_extension~handle_request.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+  DATA:
+    l_xml      TYPE string,
+    l_rssparam TYPE string.
+
+  l_rssparam = server-&gt;request-&gt;get_header_field( if_http_header_fields_sap=&gt;query_string ).
+
+  CLEAR rssfeed.
+  REFRESH rssfeed-items.
+
+  CALL METHOD me-&gt;fill_rssfeed
+    EXPORTING
+      rssparam = l_rssparam
+    RECEIVING
+      rssfeed  = rssfeed.
+
+  CALL TRANSFORMATION zrss_to_xml
+    SOURCE rssfeed = rssfeed
+    RESULT XML l_xml.
+
+  server-&gt;response-&gt;set_header_field(
+      name  = if_http_header_fields=&gt;content_type
+      value = rss_type ).
+
+  server-&gt;response-&gt;set_cdata( data = l_xml ).
+
+ENDMETHOD.</source>
+  </interfaceMethod>
+  <method CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" VERSION="1" LANGU="D" DESCRIPT="Fill the feed table" EXPOSURE="1" STATE="1" EDITORDER="2 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" MTDABSTRCT="X" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" SCONAME="RSSPARAM" VERSION="1" LANGU="D" DESCRIPT="Parameter des Feeds" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="STRING"/>
+   <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" SCONAME="RSSFEED" VERSION="1" LANGU="D" DESCRIPT="RSS-Feed" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRSS_FEED"/>
+  </method>
+  <method CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" VERSION="1" LANGU="D" DESCRIPT="Get publication date in RFC822 format" EXPOSURE="1" STATE="1" EDITORDER="1 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+   <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="DATE" VERSION="1" LANGU="D" DESCRIPT="Aktuelles Datum des Applikationsservers" CMPTYPE="1" MTDTYPE="0" EDITORDER="1 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-DATUM" PARVALUE="SY-DATUM"/>
+   <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="TIME" VERSION="1" LANGU="D" DESCRIPT="Aktuelle Uhrzeit   des Applikationsservers" CMPTYPE="1" MTDTYPE="0" EDITORDER="2 " DISPID="0 " PARDECLTYP="0" PARPASSTYP="1" TYPTYPE="1" TYPE="SY-UZEIT" PARVALUE="SY-UZEIT"/>
+   <parameter CLSNAME="ZCL_RSS_FEED" CMPNAME="GET_PUBDATE" SCONAME="PUBDATE" VERSION="1" LANGU="D" DESCRIPT="Datum des Eintrags bzw des Feeds" CMPTYPE="1" MTDTYPE="0" EDITORDER="3 " DISPID="0 " PARDECLTYP="3" PARPASSTYP="0" TYPTYPE="1" TYPE="ZRSS_PUBDATE"/>
+   <source>METHOD get_pubdate.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+* Following specification of RFC822.
+
+  DATA:
+    l_year      TYPE char4,
+    l_month     TYPE char2,
+    l_day       TYPE char2,
+    l_monthname TYPE char3,
+    l_dayname   TYPE char3,
+    l_weekday   TYPE SCAL-INDICATOR.
+
+* Split date
+  l_year  = date(4).
+  l_month = date+4(2).
+  l_day   = date+6(2).
+
+* Build name of month
+  CASE l_month.
+    WHEN &apos;01&apos;.
+      l_monthname = &apos;Jan&apos;.
+    WHEN &apos;02&apos;.
+      l_monthname = &apos;Feb&apos;.
+    WHEN &apos;03&apos;.
+      l_monthname = &apos;Mar&apos;.
+    WHEN &apos;04&apos;.
+      l_monthname = &apos;Apr&apos;.
+    WHEN &apos;05&apos;.
+      l_monthname = &apos;May&apos;.
+    WHEN &apos;06&apos;.
+      l_monthname = &apos;Jun&apos;.
+    WHEN &apos;07&apos;.
+      l_monthname = &apos;Jul&apos;.
+    WHEN &apos;08&apos;.
+      l_monthname = &apos;Aug&apos;.
+    WHEN &apos;09&apos;.
+      l_monthname = &apos;Seg&apos;.
+    WHEN &apos;10&apos;.
+      l_monthname = &apos;Oct&apos;.
+    WHEN &apos;11&apos;.
+      l_monthname = &apos;Nov&apos;.
+    WHEN &apos;12&apos;.
+      l_monthname = &apos;Dec&apos;.
+  ENDCASE.
+
+* Build name of day
+  CALL FUNCTION &apos;DATE_COMPUTE_DAY&apos;
+    EXPORTING
+      date = date
+    IMPORTING
+      day  = l_weekday.
+
+  CASE l_weekday.
+    WHEN &apos;1&apos;.
+      l_dayname = &apos;Mon&apos;.
+    WHEN &apos;2&apos;.
+      l_dayname = &apos;Tue&apos;.
+    WHEN &apos;3&apos;.
+      l_dayname = &apos;Wed&apos;.
+    WHEN &apos;4&apos;.
+      l_dayname = &apos;Thu&apos;.
+    WHEN &apos;5&apos;.
+      l_dayname = &apos;Fri&apos;.
+    WHEN &apos;6&apos;.
+      l_dayname = &apos;Sat&apos;.
+    WHEN &apos;7&apos;.
+      l_dayname = &apos;Sun&apos;.
+  ENDCASE.
+
+* Build publish date
+  CONCATENATE l_dayname &apos;, &apos; l_day space l_monthname space l_year
+    space time(2) &apos;:&apos; time+2(2) &apos;:&apos; time+4(2) space sy-zonlo
+    INTO pubdate RESPECTING BLANKS.
+
+ENDMETHOD.</source>
+  </method>
+ </CLAS>
+ <CLAS CLSNAME="ZCL_RSS_FLIGHTS" VERSION="1" LANGU="E" DESCRIPT="Demo of RSS feed" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSFINAL="X" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " REFCLSNAME="ZCL_RSS_FEED">
+  <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+  <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+  <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+  <inheritance CLSNAME="ZCL_RSS_FLIGHTS" REFCLSNAME="ZCL_RSS_FEED" VERSION="1" STATE="1">
+   <redefinition CLSNAME="ZCL_RSS_FLIGHTS" REFCLSNAME="ZCL_RSS_FEED" VERSION="1" MTDNAME="FILL_RSSFEED"/>
+  </inheritance>
+  <method CLSNAME="ZCL_RSS_FEED" CMPNAME="FILL_RSSFEED" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+   <source>METHOD fill_rssfeed.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+
+* Run report BCALV_GENERATE_ALV_T_T2 to fill the table
+  DATA:
+    lt_flights   TYPE TABLE OF alv_t_t2,
+    ls_flights   TYPE alv_t_t2,
+    ls_rss_item  TYPE zrss_item,
+    l_date       TYPE char10,
+    l_fromdate   TYPE char10,
+    l_todate     TYPE char10,
+    l_distance   TYPE char15,
+    l_fltime     TYPE char15,
+    l_deptime    TYPE char8,
+    l_arrtime    TYPE char8.
+
+* Fill Header
+  rssfeed-title       = &apos;ADventas RSS Feed&apos;.
+  rssfeed-description = &apos;Let`s try to publish a RSS feed from SAP system.&apos;.
+  rssfeed-link        = &apos;http://www.adventas.de&apos;.
+  rssfeed-langu       = &apos;EN&apos;.
+  CALL METHOD me-&gt;get_pubdate
+    EXPORTING
+      date    = sy-datum
+      time    = sy-uzeit
+    RECEIVING
+      pubdate = rssfeed-pubdate.
+* Header image
+  rssfeed-url_i   = &apos;http://www.adventas.de/images/adventas.png&apos;.
+  rssfeed-title_i = &apos;ADventas Consulting&apos;.
+  rssfeed-link_i  = &apos;http://www.adventas.de&apos;.
+
+  CONCATENATE  rssparam &apos;01&apos; INTO l_fromdate.
+  CONCATENATE  rssparam &apos;31&apos; INTO l_todate.
+
+* Get flight data
+  SELECT * FROM  alv_t_t2 INTO TABLE lt_flights
+     WHERE fldate GE l_fromdate
+       AND fldate LE l_todate.
+
+* Fill RSS feed
+  LOOP AT lt_flights INTO ls_flights.
+
+    CLEAR ls_rss_item.
+
+    CONCATENATE ls_flights-fldate(4) &apos;/&apos; ls_flights-fldate+4(2) &apos;/&apos; ls_flights-fldate+6(2) INTO l_date.
+    CONCATENATE &apos;Flightnumber &apos; ls_flights-carrid  ls_flights-connid
+      &apos; departure date &apos; l_date INTO ls_rss_item-title RESPECTING BLANKS.
+
+    WRITE ls_flights-distance TO l_distance.
+    WRITE ls_flights-fltime TO l_fltime.
+    WRITE ls_flights-deptime TO l_deptime.
+    WRITE ls_flights-arrtime TO l_arrtime.
+
+    CONCATENATE &apos;This flight leaves from &apos; ls_flights-airpfrom
+    &apos; to &apos; ls_flights-airpto
+    &apos;. The departure time is &apos; l_deptime
+    &apos;h, the arrival time &apos; l_arrtime
+    &apos;h. The flight time is &apos; l_fltime
+    &apos;hours. The flight distance is  &apos; l_distance
+    &apos; Miles.&apos; INTO ls_rss_item-description RESPECTING BLANKS.
+
+    ls_rss_item-link = &apos;http://www.adventas.de&apos;.
+
+    ls_rss_item-author = &apos;Peter Langner&apos;.
+
+    CONCATENATE ls_flights-mandt ls_flights-carrid ls_flights-connid ls_flights-fldate
+       INTO ls_rss_item-guid SEPARATED BY space.
+
+    ls_rss_item-pubdate = rssfeed-pubdate.
+
+    APPEND ls_rss_item TO rssfeed-items.
+
+  ENDLOOP.
+
+ENDMETHOD.</source>
+  </method>
+ </CLAS>
+ <DTEL ROLLNAME="ZRSS_AUTHOR" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Autor des Artikels, Email-Adresse" REPTEXT="Autor" SCRTEXT_S="Autor" SCRTEXT_M="Autor" SCRTEXT_L="Autor" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_DESC" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="15" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Kurze Zusammenfassung des Eintrags" REPTEXT="Zusammenfassung" SCRTEXT_S="Inhalt" SCRTEXT_M="Zusammenfassung" SCRTEXT_L="Zusammenfassung" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_DESC_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="06" SCRLEN1="06" SCRLEN2="12" SCRLEN3="22" DDTEXT="Eine kurze Beschreibung des Feeds." REPTEXT="Inhalt" SCRTEXT_S="Inhalt" SCRTEXT_M="Beschreibung" SCRTEXT_L="Beschreibung des Feeds" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_GUID" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Eindeutige Identifikation des Eintrags" REPTEXT="GUID" SCRTEXT_S="GUID" SCRTEXT_M="GUID" SCRTEXT_L="GUID" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_LANGU_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="07" SCRLEN1="07" SCRLEN2="07" SCRLEN3="07" DDTEXT="Sprache des Feeds" REPTEXT="Sprache" SCRTEXT_S="Sprache" SCRTEXT_M="Sprache" SCRTEXT_L="Sprache" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_LINK" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Link zum vollständigen Eintrag" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_LINK_I" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="13" SCRLEN1="04" SCRLEN2="13" SCRLEN3="13" DDTEXT="URL zur HTML Seite des Feeds" REPTEXT="Link zur Site" SCRTEXT_S="Link" SCRTEXT_M="Link zur Site" SCRTEXT_L="Link zur Site" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_PUBDATE" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Datum des Eintrags" REPTEXT="Datum" SCRTEXT_S="Datum" SCRTEXT_M="Datum" SCRTEXT_L="Datum" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_PUBDATE_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Datum der Veröffentlichung" REPTEXT="Datum" SCRTEXT_S="Datum" SCRTEXT_M="Datum" SCRTEXT_L="Datum" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_TITLE" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="18" SCRLEN1="10" SCRLEN2="18" SCRLEN3="20" DDTEXT="Titel des Eintrags" REPTEXT="Titel des Eintrags" SCRTEXT_S="Titel" SCRTEXT_M="Titel des Eintrags" SCRTEXT_L="Titel des Eintrags" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_TITLE_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="05" SCRLEN2="05" SCRLEN3="05" DDTEXT="Titel des RSS-Feeds" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_TITLE_I" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Titel des Bildes" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_URL_H" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="17" SCRLEN1="03" SCRLEN2="17" SCRLEN3="17" DDTEXT="Link zur HTML Seite des RSS-Feeds" REPTEXT="URL des RSS-Feeds" SCRTEXT_S="URL" SCRTEXT_M="URL des RSS-Feeds" SCRTEXT_L="URL des RSS-Feeds" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <DTEL ROLLNAME="ZRSS_URL_I" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="04" SCRLEN2="04" SCRLEN3="04" DDTEXT="Link zur Bilddatei (JPG, GIF oder PNG)" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
+  <tpara/>
+ </DTEL>
+ <PROG NAME="ZREADME" VARCL="X" SUBC="1" RMAND="100" RLOAD="E" UCCHECK="X">
+  <textPool>
+   <language SPRAS="E">
+    <textElement ID="R" ENTRY="Readme" LENGTH="6 "/>
+   </language>
+  </textPool>
+  <source>report zreadme.
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/</source>
+ </PROG>
+ <SICF ICF_NAME="ZADVENTAS" ICFPARGUID="0000000000000000000000000" ICFNODGUID="D4NUNXYLBQS27P5RGLT2GC49P" ICFCHILDNO="1 " ICFALIASNO="0 " ICF_OPTION="0 " ICF_TIME="000000" ICF_CUSER="BCUSER" ICF_CDATE="20081209" ICF_MUSER="BCUSER" ICF_MDATE="20141205" ICF_AUTHRC="0" HTTPCDE500="2" HTTPCDE401="2" ICFBITMAP="00000000" HTTPCDELPAG="2" ICF_CCLNT="000" ICF_MCLNT="000" HTTPCDENFPAG="2" ORIG_NAME="zadventas">
+  <icfdocu ICF_NAME="ZADVENTAS" ICFPARGUID="0000000000000000000000000" ICF_LANGU="D" ICF_DOCU="ADventas Services"/>
+ </SICF>
+ <SICF ICF_NAME="Z_RSS_FEED" ICFPARGUID="D4NUNXYLBQS27P5RGLT2GC49P" ICFNODGUID="D4NUO3F6EIPD5AN19G08KIQ3H" ICFCHILDNO="0 " ICFALIASNO="0 " ICF_OPTION="0 " ICF_TIME="000000" ICF_CUSER="BCUSER" ICF_CDATE="20081209" ICF_MUSER="BCUSER" ICF_MDATE="20141205" ICF_AUTHRC="0" HTTPCDE500="2" HTTPCDE401="2" ICFBITMAP="00000000" HTTPCDELPAG="2" ICF_CCLNT="000" ICF_MCLNT="100" HTTPCDENFPAG="2" ORIG_NAME="z_rss_feed">
+  <icfdocu ICF_NAME="Z_RSS_FEED" ICFPARGUID="D4NUNXYLBQS27P5RGLT2GC49P" ICF_LANGU="D" ICF_DOCU="RSS-Feed"/>
+  <icfhandler ICF_NAME="Z_RSS_FEED" ICFPARGUID="D4NUNXYLBQS27P5RGLT2GC49P" ICFORDER="01" ICFTYP="A" ICFHANDLER="ZCL_RSS_FLIGHTS"/>
+ </SICF>
+ <TABL TABNAME="ZRSS_FEED" DDLANGUAGE="D" TABCLASS="INTTAB" DATMIN="0000000000" DATMAX="0000000000" DATAVG="0000000000" LANGDEP="X" DDTEXT="RSS-Feed" AUTHCLASS="00" PROZPUFF="000" EXCLASS="1">
+  <dd09l AS4VERS="0000" SCHFELDANZ="000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME=".INCLUDE" DDLANGUAGE="D" POSITION="0001" ADMINFIELD="0" INTLEN="000000" PRECFIELD="ZRSS_HEADER" ROUTPUTLEN="000000" HEADLEN="00" SCRLEN1="00" SCRLEN2="00" SCRLEN3="00" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="      S" MASKLEN="0000" DDTEXT="Kopfstruktur eines RSS-Feeds" DEPTH="00" COMPTYPE="S" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="TITLE" DDLANGUAGE="D" POSITION="0002" ROLLNAME="ZRSS_TITLE_H" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="05" SCRLEN2="05" SCRLEN3="05" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des RSS-Feeds" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="LINK" DDLANGUAGE="D" POSITION="0003" ROLLNAME="ZRSS_URL_H" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="17" SCRLEN1="03" SCRLEN2="17" SCRLEN3="17" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zur HTML Seite des RSS-Feeds" REPTEXT="URL des RSS-Feeds" SCRTEXT_S="URL" SCRTEXT_M="URL des RSS-Feeds" SCRTEXT_L="URL des RSS-Feeds" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="DESCRIPTION" DDLANGUAGE="D" POSITION="0004" ROLLNAME="ZRSS_DESC_H" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="06" SCRLEN1="06" SCRLEN2="12" SCRLEN3="22" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Eine kurze Beschreibung des Feeds." REPTEXT="Inhalt" SCRTEXT_S="Inhalt" SCRTEXT_M="Beschreibung" SCRTEXT_L="Beschreibung des Feeds" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="LANGU" DDLANGUAGE="D" POSITION="0005" ROLLNAME="ZRSS_LANGU_H" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="07" SCRLEN1="07" SCRLEN2="07" SCRLEN3="07" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Sprache des Feeds" REPTEXT="Sprache" SCRTEXT_S="Sprache" SCRTEXT_M="Sprache" SCRTEXT_L="Sprache" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="PUBDATE" DDLANGUAGE="D" POSITION="0006" ROLLNAME="ZRSS_PUBDATE_H" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Datum der Veröffentlichung" REPTEXT="Datum" SCRTEXT_S="Datum" SCRTEXT_M="Datum" SCRTEXT_L="Datum" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME=".INCLUDE" DDLANGUAGE="D" POSITION="0007" ADMINFIELD="1" INTLEN="000000" PRECFIELD="ZRSS_IMAGE" ROUTPUTLEN="000000" HEADLEN="00" SCRLEN1="00" SCRLEN2="00" SCRLEN3="00" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="      S" MASKLEN="0000" DDTEXT="Bild des Feeds" DEPTH="00" COMPTYPE="S" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="URL_I" DDLANGUAGE="D" POSITION="0008" ROLLNAME="ZRSS_URL_I" ADMINFIELD="2" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="04" SCRLEN2="04" SCRLEN3="04" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zur Bilddatei (JPG, GIF oder PNG)" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="TITLE_I" DDLANGUAGE="D" POSITION="0009" ROLLNAME="ZRSS_TITLE_I" ADMINFIELD="2" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des Bildes" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="LINK_I" DDLANGUAGE="D" POSITION="0010" ROLLNAME="ZRSS_LINK_I" ADMINFIELD="2" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="13" SCRLEN1="04" SCRLEN2="13" SCRLEN3="13" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="URL zur HTML Seite des Feeds" REPTEXT="Link zur Site" SCRTEXT_S="Link" SCRTEXT_M="Link zur Site" SCRTEXT_L="Link zur Site" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_FEED" FIELDNAME="ITEMS" DDLANGUAGE="D" POSITION="0011" ROLLNAME="ZRSS_ITEM_TAB" ADMINFIELD="0" INTLEN="000000" ROUTPUTLEN="000000" HEADLEN="00" SCRLEN1="00" SCRLEN2="00" SCRLEN3="00" DATATYPE="TTYP" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  TTYPL" MASKLEN="0000" DDTEXT="Einträge eines Feeds" DEPTH="00" COMPTYPE="L" EXCLASS="0" DBPOSITION="0000"/>
+ </TABL>
+ <TABL TABNAME="ZRSS_HEADER" DDLANGUAGE="D" TABCLASS="INTTAB" DATMIN="0000000000" DATMAX="0000000000" DATAVG="0000000000" LANGDEP="X" DDTEXT="Kopfstruktur eines RSS-Feeds" AUTHCLASS="00" PROZPUFF="000" EXCLASS="1">
+  <dd09l AS4VERS="0000" SCHFELDANZ="000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="TITLE" DDLANGUAGE="D" POSITION="0001" ROLLNAME="ZRSS_TITLE_H" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="05" SCRLEN2="05" SCRLEN3="05" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des RSS-Feeds" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="LINK" DDLANGUAGE="D" POSITION="0002" ROLLNAME="ZRSS_URL_H" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="17" SCRLEN1="03" SCRLEN2="17" SCRLEN3="17" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zur HTML Seite des RSS-Feeds" REPTEXT="URL des RSS-Feeds" SCRTEXT_S="URL" SCRTEXT_M="URL des RSS-Feeds" SCRTEXT_L="URL des RSS-Feeds" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="DESCRIPTION" DDLANGUAGE="D" POSITION="0003" ROLLNAME="ZRSS_DESC_H" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="06" SCRLEN1="06" SCRLEN2="12" SCRLEN3="22" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Eine kurze Beschreibung des Feeds." REPTEXT="Inhalt" SCRTEXT_S="Inhalt" SCRTEXT_M="Beschreibung" SCRTEXT_L="Beschreibung des Feeds" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="LANGU" DDLANGUAGE="D" POSITION="0004" ROLLNAME="ZRSS_LANGU_H" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="07" SCRLEN1="07" SCRLEN2="07" SCRLEN3="07" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Sprache des Feeds" REPTEXT="Sprache" SCRTEXT_S="Sprache" SCRTEXT_M="Sprache" SCRTEXT_L="Sprache" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="PUBDATE" DDLANGUAGE="D" POSITION="0005" ROLLNAME="ZRSS_PUBDATE_H" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Datum der Veröffentlichung" REPTEXT="Datum" SCRTEXT_S="Datum" SCRTEXT_M="Datum" SCRTEXT_L="Datum" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME=".INCLUDE" DDLANGUAGE="D" POSITION="0006" ADMINFIELD="0" INTLEN="000000" PRECFIELD="ZRSS_IMAGE" ROUTPUTLEN="000000" HEADLEN="00" SCRLEN1="00" SCRLEN2="00" SCRLEN3="00" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="      S" MASKLEN="0000" DDTEXT="Bild des Feeds" DEPTH="00" COMPTYPE="S" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="URL_I" DDLANGUAGE="D" POSITION="0007" ROLLNAME="ZRSS_URL_I" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="04" SCRLEN2="04" SCRLEN3="04" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zur Bilddatei (JPG, GIF oder PNG)" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="TITLE_I" DDLANGUAGE="D" POSITION="0008" ROLLNAME="ZRSS_TITLE_I" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des Bildes" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_HEADER" FIELDNAME="LINK_I" DDLANGUAGE="D" POSITION="0009" ROLLNAME="ZRSS_LINK_I" ADMINFIELD="1" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="13" SCRLEN1="04" SCRLEN2="13" SCRLEN3="13" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="URL zur HTML Seite des Feeds" REPTEXT="Link zur Site" SCRTEXT_S="Link" SCRTEXT_M="Link zur Site" SCRTEXT_L="Link zur Site" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+ </TABL>
+ <TABL TABNAME="ZRSS_IMAGE" DDLANGUAGE="D" TABCLASS="INTTAB" DATMIN="0000000000" DATMAX="0000000000" DATAVG="0000000000" DDTEXT="Bild des Feeds" AUTHCLASS="00" PROZPUFF="000" EXCLASS="1">
+  <dd09l AS4VERS="0000" SCHFELDANZ="000"/>
+  <dd03p TABNAME="ZRSS_IMAGE" FIELDNAME="URL_I" DDLANGUAGE="D" POSITION="0001" ROLLNAME="ZRSS_URL_I" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="04" SCRLEN2="04" SCRLEN3="04" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zur Bilddatei (JPG, GIF oder PNG)" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_IMAGE" FIELDNAME="TITLE_I" DDLANGUAGE="D" POSITION="0002" ROLLNAME="ZRSS_TITLE_I" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des Bildes" REPTEXT="Titel" SCRTEXT_S="Titel" SCRTEXT_M="Titel" SCRTEXT_L="Titel" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_IMAGE" FIELDNAME="LINK_I" DDLANGUAGE="D" POSITION="0003" ROLLNAME="ZRSS_LINK_I" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="13" SCRLEN1="04" SCRLEN2="13" SCRLEN3="13" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="URL zur HTML Seite des Feeds" REPTEXT="Link zur Site" SCRTEXT_S="Link" SCRTEXT_M="Link zur Site" SCRTEXT_L="Link zur Site" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+ </TABL>
+ <TABL TABNAME="ZRSS_ITEM" DDLANGUAGE="D" TABCLASS="INTTAB" DATMIN="0000000000" DATMAX="0000000000" DATAVG="0000000000" DDTEXT="Eintrag eines Feeds" AUTHCLASS="00" PROZPUFF="000" EXCLASS="1">
+  <dd09l AS4VERS="0000" SCHFELDANZ="000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="TITLE" DDLANGUAGE="D" POSITION="0001" ROLLNAME="ZRSS_TITLE" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="18" SCRLEN1="10" SCRLEN2="18" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Titel des Eintrags" REPTEXT="Titel des Eintrags" SCRTEXT_S="Titel" SCRTEXT_M="Titel des Eintrags" SCRTEXT_L="Titel des Eintrags" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="DESCRIPTION" DDLANGUAGE="D" POSITION="0002" ROLLNAME="ZRSS_DESC" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="15" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Kurze Zusammenfassung des Eintrags" REPTEXT="Zusammenfassung" SCRTEXT_S="Inhalt" SCRTEXT_M="Zusammenfassung" SCRTEXT_L="Zusammenfassung" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="LINK" DDLANGUAGE="D" POSITION="0003" ROLLNAME="ZRSS_LINK" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Link zum vollständigen Eintrag" REPTEXT="Link" SCRTEXT_S="Link" SCRTEXT_M="Link" SCRTEXT_L="Link" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="AUTHOR" DDLANGUAGE="D" POSITION="0004" ROLLNAME="ZRSS_AUTHOR" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Autor des Artikels, Email-Adresse" REPTEXT="Autor" SCRTEXT_S="Autor" SCRTEXT_M="Autor" SCRTEXT_L="Autor" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="GUID" DDLANGUAGE="D" POSITION="0005" ROLLNAME="ZRSS_GUID" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="04" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Eindeutige Identifikation des Eintrags" REPTEXT="GUID" SCRTEXT_S="GUID" SCRTEXT_M="GUID" SCRTEXT_L="GUID" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+  <dd03p TABNAME="ZRSS_ITEM" FIELDNAME="PUBDATE" DDLANGUAGE="D" POSITION="0006" ROLLNAME="ZRSS_PUBDATE" ADMINFIELD="0" INTTYPE="g" INTLEN="000008" ROUTPUTLEN="000000" HEADLEN="05" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DTELMASTER="D" DATATYPE="STRG" LENG="000000" OUTPUTLEN="000000" DECIMALS="000000" MASK="  STRGE" MASKLEN="0000" DDTEXT="Datum des Eintrags" REPTEXT="Datum" SCRTEXT_S="Datum" SCRTEXT_M="Datum" SCRTEXT_L="Datum" DEPTH="00" COMPTYPE="E" EXCLASS="0" DBPOSITION="0000"/>
+ </TABL>
+ <TTYP TYPENAME="ZRSS_ITEM_TAB" DDLANGUAGE="D" ROWTYPE="ZRSS_ITEM" ROWKIND="S" DATATYPE="STRU" LENG="000000" DECIMALS="000000" ACCESSMODE="T" KEYDEF="D" KEYKIND="N" KEYFDCOUNT="0000" DDTEXT="Einträge eines Feeds" TYPELEN="000048" CTLENG="000000" CTDECIMALS="000000" OCCURS="00000"/>
+ <XSLT XSLTDESC="ZRSS_TO_XML" DEVCLASS="$TMP" LANGU="D" DESCRIPT="Return the content of a RSS feed as a XML file">
+  <source>&lt;?sap.transform simple?&gt;
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an &quot;AS IS&quot; BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+&lt;?sap.transform simple?&gt;
+&lt;?sap.transform simple?&gt;
+&lt;tt:transform xmlns:tt=&quot;http://www.sap.com/transformation-templates&quot;&gt;
+  &lt;tt:root name=&quot;RSSFEED&quot;/&gt;
+  &lt;tt:template&gt;
+    &lt;rss version=&quot;2.0&quot;&gt;
+      &lt;channel&gt;
+        &lt;title&gt;
+          &lt;tt:value ref=&quot;RSSFEED.TITLE&quot;/&gt;
+        &lt;/title&gt;
+        &lt;description&gt;
+          &lt;tt:value ref=&quot;RSSFEED.DESCRIPTION&quot;/&gt;
+        &lt;/description&gt;
+        &lt;link&gt;
+          &lt;tt:value ref=&quot;RSSFEED.LINK&quot;/&gt;
+        &lt;/link&gt;
+        &lt;language&gt;
+          &lt;tt:value ref=&quot;RSSFEED.LANGU&quot;/&gt;
+        &lt;/language&gt;
+        &lt;image&gt;
+          &lt;url&gt;
+            &lt;tt:value ref=&quot;RSSFEED.URL_I&quot;/&gt;
+          &lt;/url&gt;
+          &lt;title&gt;
+            &lt;tt:value ref=&quot;RSSFEED.TITLE_I&quot;/&gt;
+          &lt;/title&gt;
+          &lt;link&gt;
+            &lt;tt:value ref=&quot;RSSFEED.LINK_I&quot;/&gt;
+          &lt;/link&gt;
+        &lt;/image&gt;
+        &lt;tt:loop ref=&quot;RSSFEED.ITEMS&quot;&gt;
+          &lt;item&gt;
+            &lt;title&gt;
+              &lt;tt:value ref=&quot;TITLE&quot;/&gt;
+            &lt;/title&gt;
+            &lt;link&gt;
+              &lt;tt:value ref=&quot;LINK&quot;/&gt;
+            &lt;/link&gt;
+            &lt;description&gt;
+              &lt;tt:value ref=&quot;DESCRIPTION&quot;/&gt;
+            &lt;/description&gt;
+            &lt;author&gt;
+              &lt;tt:value ref=&quot;AUTHOR&quot;/&gt;
+            &lt;/author&gt;
+            &lt;pubdate&gt;
+              &lt;tt:value ref=&quot;PUBDATE&quot;/&gt;
+            &lt;/pubdate&gt;
+            &lt;guid&gt;
+              &lt;tt:value ref=&quot;GUID&quot;/&gt;
+            &lt;/guid&gt;
+          &lt;/item&gt;
+        &lt;/tt:loop&gt;
+      &lt;/channel&gt;
+    &lt;/rss&gt;
+  &lt;/tt:template&gt;
+&lt;/tt:transform&gt;</source>
+ </XSLT>
+</nugget>
