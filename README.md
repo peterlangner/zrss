@@ -19,4 +19,4 @@ For my example of “Publishing ABAP Content to RSS Readers” the following kin
 
 The first five types are enclosed in the standard installation of SAP Link. To be able to import also the last two types (SICF and XSLT) you need to install additional SAP Link plugins before you can import my code.
 
-Please visit www.sapling.org, where you can find a list of additional plugins and where to download them from.
+Please visit www.saplink.org, where you can find a list of additional plugins and where to download them from.
