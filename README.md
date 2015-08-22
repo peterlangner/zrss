@@ -14,9 +14,12 @@ For my example of “Publishing ABAP Content to RSS Readers” the following kin
 *	Program (PROG),
 *	Table (TABL),
 *	Table Type (TTYP),
+
 *	Internet Connection Framework Item (SICF) and
 *	XML Definition (XSLT).
 
-The first five types are enclosed in the standard installation of SAP Link. To be able to import also the last two types (SICF and XSLT) you need to install additional SAP Link plugins before you can import my code.
+The first five types are enclosed in the standard installation of SAP Link. You can download it from http://www.saplink.org.
 
-Please visit www.saplink.org, where you can find a list of additional plugins and where to download them from.
+To be able to import also the last two types (SICF and XSLT) you need to install additional SAP Link plugins before you can import my code. You can download the plugin nuggest from http://plugins.saplink.org.
+
+
