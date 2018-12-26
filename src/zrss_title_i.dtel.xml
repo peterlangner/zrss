@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZRSS_TITLE_I</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>05</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>15</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>Title of image</DDTEXT>
+    <REPTEXT>Title</REPTEXT>
+    <SCRTEXT_S>Title</SCRTEXT_S>
+    <SCRTEXT_M>Title of image</SCRTEXT_M>
+    <SCRTEXT_L>Title of image</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+   <I18N_LANGS>
+    <LANGU>D</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Titel des Bildes</DDTEXT>
+     <REPTEXT>Titel</REPTEXT>
+     <SCRTEXT_S>Titel</SCRTEXT_S>
+     <SCRTEXT_M>Titel</SCRTEXT_M>
+     <SCRTEXT_L>Titel</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

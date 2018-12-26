@@ -1,0 +1,76 @@
+<?sap.transform simple?>
+*/---------------------------------------------------------------------\
+*| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
+*|                                                                     |
+*| (c) 2011 by Peter Langner, ADventas Consulting                      |
+*|                                                                     |
+*| Licensed under the Apache License, Version 2.0 (the "License");     |
+*| you may not use this file except in compliance with the License.    |
+*| You may obtain a copy of the License at                             |
+*|                                                                     |
+*|     http://www.apache.org/licenses/LICENSE-2.0                      |
+*|                                                                     |
+*| Unless required by applicable law or agreed to in writing, software |
+*| distributed under the License is distributed on an "AS IS" BASIS,   |
+*| WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or     |
+*| implied.                                                            |
+*| See the License for the specific language governing permissions and |
+*| limitations under the License.                                      |
+*\---------------------------------------------------------------------/
+
+<?sap.transform simple?>
+<?sap.transform simple?>
+<tt:transform xmlns:tt="http://www.sap.com/transformation-templates">
+  <tt:root name="RSSFEED"/>
+  <tt:template>
+    <rss version="2.0">
+      <channel>
+        <title>
+          <tt:value ref="RSSFEED.TITLE"/>
+        </title>
+        <description>
+          <tt:value ref="RSSFEED.DESCRIPTION"/>
+        </description>
+        <link>
+          <tt:value ref="RSSFEED.LINK"/>
+        </link>
+        <language>
+          <tt:value ref="RSSFEED.LANGU"/>
+        </language>
+        <image>
+          <url>
+            <tt:value ref="RSSFEED.URL_I"/>
+          </url>
+          <title>
+            <tt:value ref="RSSFEED.TITLE_I"/>
+          </title>
+          <link>
+            <tt:value ref="RSSFEED.LINK_I"/>
+          </link>
+        </image>
+        <tt:loop ref="RSSFEED.ITEMS">
+          <item>
+            <title>
+              <tt:value ref="TITLE"/>
+            </title>
+            <link>
+              <tt:value ref="LINK"/>
+            </link>
+            <description>
+              <tt:value ref="DESCRIPTION"/>
+            </description>
+            <author>
+              <tt:value ref="AUTHOR"/>
+            </author>
+            <pubdate>
+              <tt:value ref="PUBDATE"/>
+            </pubdate>
+            <guid>
+              <tt:value ref="GUID"/>
+            </guid>
+          </item>
+        </tt:loop>
+      </channel>
+    </rss>
+  </tt:template>
+</tt:transform>

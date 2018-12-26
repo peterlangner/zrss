@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZRSS_URL_H</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>17</HEADLEN>
+    <SCRLEN1>03</SCRLEN1>
+    <SCRLEN2>17</SCRLEN2>
+    <SCRLEN3>17</SCRLEN3>
+    <DDTEXT>Linkt to HTML page of the RSS-Feed</DDTEXT>
+    <REPTEXT>URL of RSS feed</REPTEXT>
+    <SCRTEXT_S>URL</SCRTEXT_S>
+    <SCRTEXT_M>URL of RSS feed</SCRTEXT_M>
+    <SCRTEXT_L>URL of RSS feed</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+   <I18N_LANGS>
+    <LANGU>D</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Link zur HTML Seite des RSS-Feeds</DDTEXT>
+     <REPTEXT>URL des RSS-Feeds</REPTEXT>
+     <SCRTEXT_S>URL</SCRTEXT_S>
+     <SCRTEXT_M>URL des RSS-Feeds</SCRTEXT_M>
+     <SCRTEXT_L>URL des RSS-Feeds</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

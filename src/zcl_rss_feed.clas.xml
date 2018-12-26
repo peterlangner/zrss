@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_RSS_FEED</CLSNAME>
+    <VERSION>1</VERSION>
+    <LANGU>D</LANGU>
+    <DESCRIPT>RSS feed</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+    <RSTAT>K</RSTAT>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_RSS_FEED</CLSNAME>
+     <CMPNAME>FILL_RSSFEED</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Fill the feed table</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_RSS_FEED</CLSNAME>
+     <CMPNAME>GET_PUBDATE</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Get publication date in RFC822 format</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_RSS_FEED</CLSNAME>
+     <CMPNAME>RSSFEED</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>RSS-Feed</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_RSS_FEED</CLSNAME>
+     <CMPNAME>RSS_TYPE</CMPNAME>
+     <LANGU>D</LANGU>
+     <DESCRIPT>Content Type of RSS</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

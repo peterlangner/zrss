@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZRSS_TITLE</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>18</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>18</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>Publish date</DDTEXT>
+    <REPTEXT>Publish date</REPTEXT>
+    <SCRTEXT_S>Published</SCRTEXT_S>
+    <SCRTEXT_M>Publish date</SCRTEXT_M>
+    <SCRTEXT_L>Publish date</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+   <I18N_LANGS>
+    <LANGU>D</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Datum der Veröffentlichung</DDTEXT>
+     <REPTEXT>Datum der Veröff.</REPTEXT>
+     <SCRTEXT_S>Veröff.</SCRTEXT_S>
+     <SCRTEXT_M>Datum der Veröff.</SCRTEXT_M>
+     <SCRTEXT_L>Datum der Veröff.</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

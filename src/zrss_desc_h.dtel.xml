@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZRSS_DESC_H</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>11</HEADLEN>
+    <SCRLEN1>08</SCRLEN1>
+    <SCRLEN2>12</SCRLEN2>
+    <SCRLEN3>22</SCRLEN3>
+    <DDTEXT>A short description of the feed</DDTEXT>
+    <REPTEXT>Description</REPTEXT>
+    <SCRTEXT_S>Descrip.</SCRTEXT_S>
+    <SCRTEXT_M>Description</SCRTEXT_M>
+    <SCRTEXT_L>Desciption of feed</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+   <I18N_LANGS>
+    <LANGU>D</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>Eine kurze Beschreibung des Feeds.</DDTEXT>
+     <REPTEXT>Inhalt</REPTEXT>
+     <SCRTEXT_S>Inhalt</SCRTEXT_S>
+     <SCRTEXT_M>Beschreibung</SCRTEXT_M>
+     <SCRTEXT_L>Beschreibung des Feeds</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

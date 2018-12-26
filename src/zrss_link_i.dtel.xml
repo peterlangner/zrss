@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZRSS_LINK_I</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>13</HEADLEN>
+    <SCRLEN1>04</SCRLEN1>
+    <SCRLEN2>13</SCRLEN2>
+    <SCRLEN3>13</SCRLEN3>
+    <DDTEXT>URL to HTML page of feed</DDTEXT>
+    <REPTEXT>Link to site</REPTEXT>
+    <SCRTEXT_S>Link</SCRTEXT_S>
+    <SCRTEXT_M>Link to site</SCRTEXT_M>
+    <SCRTEXT_L>Link to site</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+   <I18N_LANGS>
+    <LANGU>D</LANGU>
+   </I18N_LANGS>
+   <DD04_TEXTS>
+    <item>
+     <DDLANGUAGE>D</DDLANGUAGE>
+     <DDTEXT>URL zur HTML Seite des Feeds</DDTEXT>
+     <REPTEXT>Link zur Site</REPTEXT>
+     <SCRTEXT_S>Link</SCRTEXT_S>
+     <SCRTEXT_M>Link zur Site</SCRTEXT_M>
+     <SCRTEXT_L>Link zur Site</SCRTEXT_L>
+    </item>
+   </DD04_TEXTS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
