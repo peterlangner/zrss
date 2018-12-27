@@ -40,9 +40,9 @@ class zcl_rss_feed definition
       returning
         value(pubdate) type zrss_pubdate .
 
-    "! This methods converts xml string of an RSS feed into the internal structure of.
-    "! @parameter rssparam | XML string
-    "! @parameter rssfeed | Structured ABAP type
+    "! Fill the RSS feed data structure with the request data.
+    "! @parameter rssparam | RSS request
+    "! @parameter rssfeed  | result as structured ABAP type
     methods fill_rssfeed
     abstract
       importing
@@ -53,11 +53,11 @@ class zcl_rss_feed definition
   private section.
 
     data m_rssfeed type zrss_feed .
-ENDCLASS.
+endclass.
 
 
 
-CLASS ZCL_RSS_FEED IMPLEMENTATION.
+class zcl_rss_feed implementation.
 
 
   method get_pubdate.
@@ -133,22 +133,24 @@ CLASS ZCL_RSS_FEED IMPLEMENTATION.
 
   endmethod.
 
-
   method if_http_extension~handle_request.
     data:
       l_xml      type string,
       l_rssparam type string.
 
+* Get the parameters of the HTTP request
     l_rssparam = server->request->get_header_field( if_http_header_fields_sap=>query_string ).
 
+* Fill the RSS feed data structure with the request data
     clear m_rssfeed.
-
     m_rssfeed = fill_rssfeed( l_rssparam ).
 
+*  Transform it to XML
     call transformation zrss_to_xml
       source rssfeed = m_rssfeed
       result xml l_xml.
 
+* Send the result to the RSS reader
     server->response->set_header_field(
         name  = if_http_header_fields=>content_type
         value = rss_type ).
@@ -156,4 +158,4 @@ CLASS ZCL_RSS_FEED IMPLEMENTATION.
     server->response->set_cdata( data = l_xml ).
 
   endmethod.
-ENDCLASS.
+endclass.
