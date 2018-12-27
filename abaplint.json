@@ -75,7 +75,7 @@
       "depth": 5
     },
     "keywords_upper": {
-      "enabled": true,
+      "enabled": false,
       "ignoreExceptions": true
     },
     "cloud_types": {
@@ -89,7 +89,7 @@
       "enabled": true
     },
     "method_parameter_names": {
-      "enabled": true,
+      "enabled": false,
       "ignoreExceptions": true,
       "importing": "^I._.*$",
       "returning": "^R._.*$",
@@ -103,13 +103,13 @@
       "enabled": true
     },
     "local_variable_names": {
-      "enabled": true,
+      "enabled": false
       "expectedData": "^L._.*$",
       "expectedConstant": "^LC_.*$",
       "expectedFS": "^<L._.*>$"
     },
     "class_attribute_names": {
-      "enabled": true,
+      "enabled": false,
       "ignoreExceptions": true,
       "statics": "^G._.*$",
       "instance": "^M._.*$"
