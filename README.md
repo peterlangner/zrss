@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/peterlangner/zrss.svg?branch=master)](https://travis-ci.com/peterlangner/zrss)
+
 # zrss
 Publishing Content from the SAP NetWeaver Application Server ABAP to ADT and other RSS Readers
 
