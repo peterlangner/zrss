@@ -1,3 +1,7 @@
+class zcl_rss_feed definition
+  public
+  abstract
+  create public .
 */---------------------------------------------------------------------\
 *| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
 *|                                                                     |
@@ -16,11 +20,6 @@
 *| See the License for the specific language governing permissions and |
 *| limitations under the License.                                      |
 *\---------------------------------------------------------------------/
-class zcl_rss_feed definition
-  public
-  abstract
-  create public .
-
   public section.
 
     interfaces if_http_extension .
@@ -53,10 +52,12 @@ class zcl_rss_feed definition
   private section.
 
     data m_rssfeed type zrss_feed .
-endclass.
+ENDCLASS.
 
 
-class zcl_rss_feed implementation.
+
+CLASS ZCL_RSS_FEED IMPLEMENTATION.
+
 
   method get_pubdate.
     data:
@@ -155,4 +156,4 @@ class zcl_rss_feed implementation.
     server->response->set_cdata( data = l_xml ).
 
   endmethod.
-endclass.
+ENDCLASS.

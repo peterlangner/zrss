@@ -1,3 +1,9 @@
+class zcl_rss_flights definition
+  public
+  inheriting from zcl_rss_feed
+  final
+  create public .
+
 */---------------------------------------------------------------------\
 *| This file is part of ZRSS Publishing Content ABAP to RSS Readers.   |
 *|                                                                     |
@@ -16,11 +22,6 @@
 *| See the License for the specific language governing permissions and |
 *| limitations under the License.                                      |
 *\---------------------------------------------------------------------/
-class zcl_rss_flights definition
-  public
-  inheriting from zcl_rss_feed
-  final
-  create public .
 
   public section.
 
@@ -29,9 +30,11 @@ class zcl_rss_flights definition
     methods fill_rssfeed
       redefinition .
   private section.
-endclass.
+ENDCLASS.
 
-class zcl_rss_flights implementation.
+
+
+CLASS ZCL_RSS_FLIGHTS IMPLEMENTATION.
 
 
   method fill_rssfeed.
@@ -105,4 +108,4 @@ class zcl_rss_flights implementation.
     endloop.
 
   endmethod.
-endclass.
+ENDCLASS.
