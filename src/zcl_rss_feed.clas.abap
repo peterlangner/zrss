@@ -28,7 +28,8 @@ class zcl_rss_feed definition
 
   protected section.
 
-    "! Based on time and date, the publication date is returned in a format needed for the RSS feed following specification of RFC822.
+    "! Based on time and date, the publication date is returned in a format
+    "! needed for the RSS feed following specification of RFC822.
     "! @parameter date | Date
     "! @parameter time | Time
     "! @parameter pubdate | Publication date
@@ -141,7 +142,6 @@ CLASS ZCL_RSS_FEED IMPLEMENTATION.
     l_rssparam = server->request->get_header_field( if_http_header_fields_sap=>query_string ).
 
     clear m_rssfeed.
-    refresh m_rssfeed-items.
 
     m_rssfeed = fill_rssfeed( l_rssparam ).
 
