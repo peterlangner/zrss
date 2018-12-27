@@ -103,7 +103,7 @@
       "enabled": true
     },
     "local_variable_names": {
-      "enabled": false
+      "enabled": false,
       "expectedData": "^L._.*$",
       "expectedConstant": "^LC_.*$",
       "expectedFS": "^<L._.*>$"
