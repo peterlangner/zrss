@@ -5,7 +5,7 @@ If you want know, what this project is about, please go to http://scn.sap.com/co
 
 # Version
 
-This is based on SAP Netweaver 7.00
+ABAP 7.00
 
 # Installation
 
