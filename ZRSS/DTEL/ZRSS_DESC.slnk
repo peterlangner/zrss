@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<DTEL ROLLNAME="ZRSS_DESC" DDLANGUAGE="D" ROUTPUTLEN="000000" HEADLEN="15" SCRLEN1="10" SCRLEN2="15" SCRLEN3="20" DDTEXT="Kurze Zusammenfassung des Eintrags" REPTEXT="Zusammenfassung" SCRTEXT_S="Inhalt" SCRTEXT_M="Zusammenfassung" SCRTEXT_L="Zusammenfassung" AUTHCLASS="00" DTELMASTER="D" DATATYPE="STRG" LENG="000000" DECIMALS="000000" OUTPUTLEN="000000">
- <tpara/>
-</DTEL>
